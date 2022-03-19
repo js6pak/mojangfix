@@ -1,0 +1,48 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "pl.js6pak.mojangfix.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "client.auth.ClientNetworkHandlerMixin",
+    "client.auth.SessionMixin",
+    "client.controls.ControlsOptionsScreenMixin",
+    "client.controls.GameOptionsMixin",
+    "client.controls.KeyBindingMixin",
+    "client.inventory.ContainerScreenMixin",
+    "client.inventory.PlayerEntityMixin",
+    "client.misc.DeathScreenMixin",
+    "client.misc.InGameHudMixin",
+    "client.misc.MinecraftMixin",
+    "client.misc.MinecraftAppletMixin",
+    "client.misc.ScreenMixin",
+    "client.misc.TitleScreenMixin",
+    "client.misc.ResourceDownloadThreadMixin",
+    "client.multiplayer.ReturnToMainMenuMixin",
+    "client.multiplayer.TitleScreenMixin",
+    "client.skin.BipedEntityModelMixin",
+    "client.skin.EntityRenderDispatcherMixin",
+    "client.skin.MixinEntityPlayerSided",
+    "client.skin.ModelPartMixin",
+    "client.skin.PlayerEntityMixin",
+    "client.skin.PlayerEntityRendererMixin",
+    "client.skin.SkinImageProcessorMixin",
+    "client.skin.WorldRendererMixin",
+    "client.text.chat.ChatScreenMixin",
+    "client.text.chat.SleepingChatScreenMixin",
+    "client.text.sign.ClientNetworkHandlerMixin",
+    "client.text.sign.SignBlockEntityMixin",
+    "client.text.sign.SignBlockEntityRendererMixin",
+    "client.text.sign.SignEditScreenMixin",
+    "client.text.TextFieldWidgetMixin",
+    "client.MinecraftAccessor",
+    "client.ScreenAccessor"
+  ],
+  "server": [
+    "server.auth.ServerNetworkHandlerAccessor",
+    "server.auth.ServerNetworkHandlerMixin"
+  ]
+}

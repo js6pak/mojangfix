@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "mojangfix",
+  "version": "${version}",
+  "name": "MojangFix",
+  "description": "Fixes skins, authentication and more",
+  "authors": [
+    "js6pak"
+  ],
+  "contact": {
+    "sources": "https://github.com/js6pak/mojangfix"
+  },
+  "license": "LGPL-3.0-only",
+  "icon": "assets/mojangfix/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "pl.js6pak.mojangfix.MojangFixMod"
+    ],
+    "client": [
+      "pl.js6pak.mojangfix.client.MojangFixClientMod"
+    ]
+  },
+  "mixins": [
+    "mojangfix.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "1.0.0-beta.7.3"
+  }
+}

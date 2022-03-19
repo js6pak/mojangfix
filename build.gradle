@@ -1,0 +1,70 @@
+plugins {
+    id 'babric-loom' version '0.12-SNAPSHOT'
+    id "maven-publish"
+    id "com.diffplug.spotless" version "6.2.2"
+}
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+
+archivesBaseName = project.archives_base_name
+group = project.maven_group
+
+def ENV = System.getenv()
+if (ENV.GITHUB_RUN_NUMBER) {
+    version = project.mod_version + '-ci.' + ENV.GITHUB_RUN_NUMBER
+} else {
+    version = project.mod_version + '+local'
+}
+
+repositories {
+    maven {
+        name = 'Babric'
+        url = 'https://maven.glass-launcher.net/babric'
+    }
+    maven {
+        name = "Jitpack"
+        url = "https://jitpack.io/"
+        content {
+            includeGroup("com.github.GeyserMC")
+        }
+    }
+}
+
+loom {
+    gluedMinecraftJar()
+    customMinecraftManifest.set("https://babric.github.io/manifest-polyfill/${minecraft_version}.json")
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "babric:barn:b1.7.3+build.4"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    implementation "org.slf4j:slf4j-api:1.8.0-beta4"
+    implementation "org.apache.logging.log4j:log4j-slf4j18-impl:2.16.0"
+
+    def lombok = "org.projectlombok:lombok:1.18.22"
+    compileOnly lombok
+    annotationProcessor lombok
+
+    include(implementation("com.github.GeyserMC:MCAuthLib:d9d773e5d50327c33898c65cd545a4f6ef3ba1b5"))
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+spotless {
+    ratchetFrom "origin/master"
+    java {
+        licenseHeaderFile(rootProject.file("HEADER"))
+    }
+}
