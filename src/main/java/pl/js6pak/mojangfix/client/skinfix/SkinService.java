@@ -132,7 +132,7 @@ public class SkinService {
 
                 MojangFixMod.getLogger().info("Downloaded profile: " + profile.getName() + " (" + profile.getId() + ")");
                 profiles.put(name, playerProfile);
-                break;
+                return;
             }
 
             profiles.put(name, null);
