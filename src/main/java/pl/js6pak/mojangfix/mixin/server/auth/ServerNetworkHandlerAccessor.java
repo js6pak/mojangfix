@@ -16,11 +16,11 @@
 package pl.js6pak.mojangfix.mixin.server.auth;
 
 import net.minecraft.network.packet.login.LoginHelloPacket;
-import net.minecraft.server.network.ServerNetworkHandler;
+import net.minecraft.server.network.ServerLoginNetworkHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(ServerNetworkHandler.class)
+@Mixin(ServerLoginNetworkHandler.class)
 public interface ServerNetworkHandlerAccessor {
     @Accessor
     String getServerId();

@@ -19,7 +19,7 @@ import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.request.RequestException;
 import com.github.steveice10.mc.auth.service.SessionService;
 import net.minecraft.network.packet.login.LoginHelloPacket;
-import net.minecraft.server.network.ServerNetworkHandler;
+import net.minecraft.server.network.ServerLoginNetworkHandler;
 import org.spongepowered.asm.mixin.*;
 import pl.js6pak.mojangfix.MojangFixMod;
 
@@ -27,7 +27,7 @@ import pl.js6pak.mojangfix.MojangFixMod;
 public class ServerNetworkHandlerMixin {
     @Shadow
     @Final
-    ServerNetworkHandler networkHandler;
+    ServerLoginNetworkHandler networkHandler;
 
     @Shadow
     @Final
