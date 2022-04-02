@@ -21,6 +21,9 @@ import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pl.js6pak.mojangfix.mixinterface.PlayerEntityRendererAccessor;
 import pl.js6pak.mojangfix.client.skinfix.PlayerEntityModel;
 
@@ -34,7 +37,11 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer imp
     }
 
     public void setThinArms(boolean thinArms) {
-        this.model = new PlayerEntityModel(0.0F, thinArms);
-        this.bipedModel = (BipedEntityModel) this.model;
+        this.model = this.bipedModel = new PlayerEntityModel(0.0F, thinArms);
+    }
+
+    @Inject(method = "renderHand", at = @At("RETURN"))
+    private void fixFirstPerson(CallbackInfo ci) {
+        ((PlayerEntityModel) bipedModel).rightSleeve.render(0.0625F);
     }
 }
