@@ -16,7 +16,6 @@
 package pl.js6pak.mojangfix.mixin.client.auth;
 
 import com.github.steveice10.mc.auth.data.GameProfile;
-import com.github.steveice10.mc.auth.service.SessionService;
 import lombok.Getter;
 import net.minecraft.client.util.Session;
 import org.spongepowered.asm.mixin.Mixin;
@@ -42,16 +41,10 @@ public class SessionMixin implements SessionAccessor {
     private String accessToken;
 
     @Unique
-    @Getter
-    private SessionService sessionService;
-
-    @Unique
     private static final Pattern UUID_PATTERN = Pattern.compile("(\\w{8})(\\w{4})(\\w{4})(\\w{4})(\\w{12})");
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onInit(String username, String sessionId, CallbackInfo ci) {
-        this.sessionService = new SessionService();
-
         String[] split = sessionId.split(":");
         if (split.length == 3 && split[0].equalsIgnoreCase("token")) {
             accessToken = split[1];

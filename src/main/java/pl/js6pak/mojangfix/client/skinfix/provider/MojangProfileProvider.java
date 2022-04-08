@@ -19,7 +19,6 @@ import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.auth.exception.profile.ProfileException;
 import com.github.steveice10.mc.auth.service.ProfileService;
 import com.github.steveice10.mc.auth.service.SessionService;
-import pl.js6pak.mojangfix.mixin.client.MinecraftAccessor;
 import pl.js6pak.mojangfix.mixinterface.SessionAccessor;
 
 import java.util.concurrent.CompletableFuture;
@@ -32,10 +31,9 @@ public class MojangProfileProvider implements ProfileProvider {
     public Future<GameProfile> get(String username) {
         CompletableFuture<GameProfile> future = new CompletableFuture<>();
 
-        final SessionAccessor session = (SessionAccessor) MinecraftAccessor.getInstance().session;
         profileService.findProfilesByName(new String[]{username}, new ProfileService.ProfileLookupCallback() {
             public void onProfileLookupSucceeded(GameProfile profile) {
-                SessionService sessionService = session.getSessionService();
+                SessionService sessionService = SessionAccessor.SESSION_SERVICE;
 
                 try {
                     sessionService.fillProfileProperties(profile);

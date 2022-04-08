@@ -55,7 +55,7 @@ public abstract class ClientNetworkHandlerMixin {
                 this.connection.disconnect("disconnect.loginFailedInfo", "Invalid access token!");
             }
 
-            session.getSessionService().joinServer(session.getGameProfile(), session.getAccessToken(), packet.name);
+            SessionAccessor.SESSION_SERVICE.joinServer(session.getGameProfile(), session.getAccessToken(), packet.name);
             this.sendPacket(new LoginHelloPacket(this.minecraft.session.username, 14));
         } catch (RequestException e) {
             this.connection.disconnect("disconnect.loginFailedInfo", e.getClass().getSimpleName() + "\n" + e.getMessage());

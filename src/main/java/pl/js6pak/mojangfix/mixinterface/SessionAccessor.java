@@ -23,5 +23,5 @@ public interface SessionAccessor {
 
     String getAccessToken();
 
-    SessionService getSessionService();
+    SessionService SESSION_SERVICE = new SessionService();
 }
