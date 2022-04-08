@@ -32,5 +32,5 @@ Allows the server to verify that the connecting player is logged in
 
 <details><summary>Inventory tweaks</summary>
 
-<video src="https://user-images.githubusercontent.com/35262707/159063818-e450561d-f13d-435a-b46b-879cc54a8a0f.mp4" />
+<video controls src="https://user-images.githubusercontent.com/35262707/159063818-e450561d-f13d-435a-b46b-879cc54a8a0f.mp4" />
 </details>

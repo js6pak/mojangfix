@@ -1,6 +1,7 @@
 plugins {
     id 'babric-loom' version '0.12-SNAPSHOT'
     id "maven-publish"
+    id("com.modrinth.minotaur") version "2.+"
     id "com.diffplug.spotless" version "6.2.2"
 }
 
@@ -11,7 +12,12 @@ group = project.maven_group
 
 def ENV = System.getenv()
 if (ENV.GITHUB_RUN_NUMBER) {
-    version = project.mod_version + '-ci.' + ENV.GITHUB_RUN_NUMBER
+    if (ENV.GITHUB_REF && ENV.GITHUB_REF.startsWith("refs/tags/")) {
+        version = project.mod_version
+        spotless.enforceCheck = false
+    } else {
+        version = project.mod_version + '-ci.' + ENV.GITHUB_RUN_NUMBER
+    }
 } else {
     version = project.mod_version + '+local'
 }
@@ -68,3 +74,13 @@ spotless {
         licenseHeaderFile(rootProject.file("HEADER"))
     }
 }
+
+modrinth {
+    projectId = "8sdj2JBj"
+    uploadFile = remapJar
+    gameVersions = [project.minecraft_version]
+    loaders = ["fabric"]
+    changelog = rootProject.file("CHANGELOG.md").text
+    syncBodyFrom = rootProject.file("README.md").text
+}
+tasks.modrinth.dependsOn(tasks.modrinthSyncBody)

@@ -13,6 +13,15 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/loom-cache
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: build
         run: ./gradlew build
       - name: capture build artifacts
@@ -20,3 +29,15 @@ jobs:
         with:
           name: Artifacts
           path: build/libs/
+      - name: release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: false
+          body_path: CHANGELOG.md
+          files: build/libs/*.jar
+      - name: modrinth
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        run: ./gradlew modrinth
