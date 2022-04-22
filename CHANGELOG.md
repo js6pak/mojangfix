@@ -1,2 +1,1 @@
-- Rewrite
-- Port to [babric](https://babric.github.io/)
+- Fix auth on server

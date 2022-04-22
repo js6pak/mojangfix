@@ -23,7 +23,7 @@ import net.minecraft.server.network.ServerLoginNetworkHandler;
 import org.spongepowered.asm.mixin.*;
 import pl.js6pak.mojangfix.MojangFixMod;
 
-@Mixin(targets = "net.minecraft.server.network.ServerNetworkHandler$AuthThread")
+@Mixin(targets = "net.minecraft.server.network.ServerLoginNetworkHandler$AuthThread")
 public class ServerNetworkHandlerMixin {
     @Shadow
     @Final
