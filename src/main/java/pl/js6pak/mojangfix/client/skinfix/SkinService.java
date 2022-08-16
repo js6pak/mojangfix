@@ -55,11 +55,11 @@ public class SkinService {
     private void updatePlayer(PlayerEntity player, PlayerProfile playerProfile) {
         if (playerProfile == null) return;
 
+        PlayerEntityAccessor accessor = (PlayerEntityAccessor) player;
+        accessor.setTextureModel(playerProfile.getModel());
         player.skinUrl = playerProfile.getSkinUrl();
         player.capeUrl = player.playerCapeUrl = playerProfile.getCapeUrl();
         MinecraftAccessor.getInstance().worldRenderer.loadEntitySkin(player);
-        PlayerEntityAccessor accessor = (PlayerEntityAccessor) player;
-        accessor.setTextureModel(playerProfile.getModel());
     }
 
     private boolean updatePlayer(PlayerEntity player) {
