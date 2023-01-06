@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 js6pak
+ * Copyright (C) 2022-2023 js6pak
  *
  * This file is part of MojangFix.
  *
@@ -37,7 +37,14 @@ public class SignEditScreenMixin {
     @Shadow
     private int currentRow;
 
-    @Shadow private int ticksSinceOpened;
+    @Shadow
+    private int ticksSinceOpened;
+
+    @Inject(method = "init", at = @At("RETURN"))
+    private void onInit(CallbackInfo ci) {
+        TextFieldWidget[] textFields = ((SignBlockEntityAccessor) this.sign).getTextFields();
+        textFields[0].setFocused(true);
+    }
 
     @Inject(method = "keyPressed", at = @At(value = "JUMP", opcode = Opcodes.IF_ICMPNE, ordinal = 2), cancellable = true)
     private void onKeyPressed(char character, int keyCode, CallbackInfo ci) {
@@ -47,6 +54,7 @@ public class SignEditScreenMixin {
         }
         textFields[this.currentRow].setFocused(true);
         textFields[this.currentRow].keyPressed(character, keyCode);
+        this.sign.texts[this.currentRow] = textFields[this.currentRow].getText();
         ci.cancel();
     }
 

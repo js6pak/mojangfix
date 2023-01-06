@@ -43,7 +43,13 @@ public class SignBlockEntityMixin extends BlockEntity implements SignBlockEntity
         for (int i = 0; i < texts.length; i++) {
             TextFieldWidget textField = textFields[i] = new TextFieldWidget(null, MinecraftAccessor.getInstance().textRenderer, -1, -1, -1, -1, texts[i]);
             textField.setMaxLength(15);
-            if (i == 0) textField.setFocused(true);
+        }
+    }
+
+    @Inject(method = "readNbt", at = @At("RETURN"))
+    private void onReadNbt(CallbackInfo ci) {
+        for (int i = 0; i < texts.length; i++) {
+            textFields[i].setText(texts[i]);
         }
     }
 
