@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 js6pak
+ * Copyright (C) 2022-2023 js6pak
  *
  * This file is part of MojangFix.
  *
@@ -19,6 +19,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import org.lwjgl.input.Keyboard;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -91,10 +92,10 @@ public class ChatScreenMixin extends Screen implements ChatScreenAccessor {
 
     @Inject(method = "keyPressed", at = @At(value = "JUMP", opcode = Opcodes.IF_ICMPNE, ordinal = 2), cancellable = true)
     private void onKeyPressed(char character, int keyCode, CallbackInfo ci) {
-        if (keyCode == 200 && this.chatHistoryPosition > -CHAT_HISTORY.size()) {
+        if (keyCode == Keyboard.KEY_UP && this.chatHistoryPosition > -CHAT_HISTORY.size()) {
             --this.chatHistoryPosition;
             this.setTextFromHistory();
-        } else if (keyCode == 208 && this.chatHistoryPosition < -1) {
+        } else if (keyCode == Keyboard.KEY_DOWN && this.chatHistoryPosition < -1) {
             ++this.chatHistoryPosition;
             this.setTextFromHistory();
         } else {
