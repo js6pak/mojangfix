@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 js6pak
+ * Copyright (C) 2023 js6pak
  *
  * This file is part of MojangFix.
  *
@@ -15,7 +15,6 @@
 
 package pl.js6pak.mojangfix.mixin.client.skin;
 
-import net.minecraft.client.network.OtherPlayerEntity;
 import net.minecraft.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
@@ -25,14 +24,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import pl.js6pak.mojangfix.client.skinfix.SkinService;
 
-@Mixin({OtherPlayerEntity.class, ClientPlayerEntity.class})
-public abstract class MixinEntityPlayerSided extends PlayerEntity {
-    public MixinEntityPlayerSided(World world) {
-        super(world);
-    }
+@Mixin(ClientPlayerEntity.class)
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {
-        SkinService.getInstance().init(this);
-    }
+public abstract class ClientPlayerEntityMixin extends PlayerEntity {
+	public ClientPlayerEntityMixin(World arg) {
+		super(arg);
+	}
+
+	@Inject(method = "<init>", at = @At("RETURN"))
+	private void onInit(CallbackInfo ci) {
+		SkinService.getInstance().init(this);
+	}
 }
