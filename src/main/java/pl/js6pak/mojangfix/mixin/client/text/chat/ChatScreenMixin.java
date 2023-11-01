@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 js6pak
+ * Copyright (C) 2022-2023 js6pak
  *
  * This file is part of MojangFix.
  *
@@ -17,90 +17,80 @@ package pl.js6pak.mojangfix.mixin.client.text.chat;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import org.objectweb.asm.Opcodes;
+import net.minecraft.entity.player.ClientPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import pl.js6pak.mojangfix.mixinterface.ChatScreenAccessor;
-import pl.js6pak.mojangfix.mixinterface.TextFieldWidgetAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(ChatScreen.class)
-public class ChatScreenMixin extends Screen implements ChatScreenAccessor {
-    @Unique
-    private String initialMessage = "";
-
-    public ChatScreen setInitialMessage(String initialMessage) {
-        this.initialMessage = initialMessage;
-        return (ChatScreen) (Object) this;
-    }
-
-    @Unique
-    private TextFieldWidget textField;
-
-    @Unique
-    private int chatHistoryPosition;
-
+public class ChatScreenMixin {
     @Unique
     private static final List<String> CHAT_HISTORY = new ArrayList<>();
+    @Shadow
+    protected String text;
+    @Unique
+    private int chatHistoryPosition = 0;
+    @Unique
+    private String afterText = "";
 
-    @Inject(method = "init", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {
-        this.textField = new TextFieldWidget(this, this.textRenderer, 2, this.height - 14, this.width - 2, this.height - 2, this.initialMessage);
-        this.textField.setFocused(true);
-        this.textField.setMaxLength(100);
-    }
-
-    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
-    private void onTick(CallbackInfo ci) {
-        this.textField.tick();
-        ci.cancel();
-    }
-
-    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ChatScreen;drawStringWithShadow(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"))
-    private void redirectDrawString(ChatScreen chatScreen, TextRenderer textRenderer, String text, int x, int y, int color) {
-        this.drawStringWithShadow(textRenderer, "> " + ((TextFieldWidgetAccessor) this.textField).getDisplayText(), x, y, color);
-    }
-
-    @Redirect(method = "*", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/screen/ChatScreen;text:Ljava/lang/String;", opcode = Opcodes.GETFIELD))
-    private String getMessage(ChatScreen chatScreen) {
-        return this.textField.getText();
-    }
-
-    @Inject(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/ClientPlayerEntity;sendChatMessage(Ljava/lang/String;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void onSendChatMessage(char character, int keyCode, CallbackInfo ci, String var3, String message) {
-        int size = CHAT_HISTORY.size();
-        if (size > 0 && CHAT_HISTORY.get(size - 1).equals(message)) {
+    @Unique
+    void setChatHistory() {
+        if (chatHistoryPosition == 0) {
+            text = "";
             return;
         }
 
-        CHAT_HISTORY.add(message);
+        text = CHAT_HISTORY.get(CHAT_HISTORY.size() - chatHistoryPosition);
     }
 
-    private void setTextFromHistory() {
-        this.textField.setText(CHAT_HISTORY.get(CHAT_HISTORY.size() + this.chatHistoryPosition));
-    }
-
-    @Inject(method = "keyPressed", at = @At(value = "JUMP", opcode = Opcodes.IF_ICMPNE, ordinal = 2), cancellable = true)
-    private void onKeyPressed(char character, int keyCode, CallbackInfo ci) {
-        if (keyCode == 200 && this.chatHistoryPosition > -CHAT_HISTORY.size()) {
-            --this.chatHistoryPosition;
-            this.setTextFromHistory();
-        } else if (keyCode == 208 && this.chatHistoryPosition < -1) {
-            ++this.chatHistoryPosition;
-            this.setTextFromHistory();
-        } else {
-            this.textField.keyPressed(character, keyCode);
+    @Inject(method = "keyPressed", at = @At("TAIL"))
+    protected void keyPressed(char keyCode, int scanCode, CallbackInfo ci) {
+        if (scanCode == 200 && chatHistoryPosition < CHAT_HISTORY.size()) // up
+        {
+            chatHistoryPosition++;
+            setChatHistory();
+        } else if (scanCode == 208 && chatHistoryPosition > 0) // down
+        {
+            chatHistoryPosition--;
+            setChatHistory();
         }
+        if (scanCode == 203) // left
+        {
+            if (text.length() > 0) {
+                afterText = text.charAt(text.length() - 1) + afterText;
+                text = text.substring(0, text.length() - 1);
+            }
+        }
+        if (scanCode == 205) // right
+        {
+            if (afterText.length() > 0) {
+                text = text + afterText.charAt(0);
+                afterText = afterText.substring(1);
+            }
+        }
+        if (scanCode == 211) // del
+        {
+            if (afterText.length() > 0) {
+                afterText = afterText.substring(1);
+            }
+        }
+    }
 
-        ci.cancel();
+    @Redirect(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/ClientPlayerEntity;sendChatMessage(Ljava/lang/String;)V"))
+    protected void sendChat(ClientPlayerEntity instance, String s) {
+        CHAT_HISTORY.add(s + afterText);
+        instance.sendChatMessage(s + afterText);
+    }
+
+    @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ChatScreen;drawStringWithShadow(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"))
+    public void drawTextWithAfterText(ChatScreen instance, TextRenderer textRenderer, String s, int x, int y, int c) {
+        instance.drawStringWithShadow(textRenderer, s + afterText, x, y, c);
     }
 }
