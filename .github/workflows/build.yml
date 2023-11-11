@@ -16,7 +16,11 @@ jobs:
           distribution: 'microsoft'
           cache: 'gradle'
       - name: build
-        run: ./gradlew build
+        run: |
+          # https://github.com/diffplug/spotless/tree/main/plugin-gradle#using-ratchetfrom-on-ci-systems
+          git fetch origin master
+
+          ./gradlew build
       - name: capture build artifacts
         uses: actions/upload-artifact@v3
         with:

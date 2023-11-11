@@ -19,6 +19,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import org.lwjgl.input.Keyboard;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -77,11 +78,11 @@ public class ChatScreenMixin extends Screen implements ChatScreenAccessor {
 
     @Inject(method = "keyPressed", at = @At(value = "JUMP", opcode = Opcodes.IF_ICMPNE, ordinal = 2), cancellable = true)
     private void onKeyPressedEntry(char character, int keyCode, CallbackInfo ci) {
-        if (keyCode == 200 && chatHistoryPosition > -CHAT_HISTORY.size()) {
+        if (keyCode == Keyboard.KEY_UP && chatHistoryPosition > -CHAT_HISTORY.size()) {
             --chatHistoryPosition;
             setTextFromHistory();
             ci.cancel();
-        } else if (keyCode == 208 && chatHistoryPosition < -1) {
+        } else if (keyCode == Keyboard.KEY_DOWN && chatHistoryPosition < -1) {
             ++chatHistoryPosition;
             setTextFromHistory();
             ci.cancel();
