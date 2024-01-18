@@ -14,8 +14,6 @@
     "client.controls.ControlsOptionsScreenMixin",
     "client.controls.GameOptionsMixin",
     "client.controls.KeyBindingMixin",
-    "client.inventory.ContainerScreenMixin",
-    "client.inventory.PlayerEntityMixin",
     "client.misc.DeathScreenMixin",
     "client.misc.InGameHudMixin",
     "client.misc.MinecraftAppletMixin",
