@@ -30,7 +30,8 @@ Allows the server to verify that the connecting player is logged in
 ![text](https://user-images.githubusercontent.com/35262707/159060408-8e35a074-0ee1-426a-bc51-1152d6adca34.gif)
 </details>
 
-<details><summary>Inventory tweaks</summary>
+<details><summary>Inventory tweaks (removed)</summary>
 
-<video controls src="https://user-images.githubusercontent.com/35262707/159063818-e450561d-f13d-435a-b46b-879cc54a8a0f.mp4" />
+Replacement Tweaks: https://github.com/telvarost/InventoryTweaks-StationAPI
+Original Mod: https://github.com/js6pak/mojangfix
 </details>
