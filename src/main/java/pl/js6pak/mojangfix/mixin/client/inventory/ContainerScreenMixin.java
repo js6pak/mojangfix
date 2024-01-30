@@ -52,35 +52,6 @@ public abstract class ContainerScreenMixin extends Screen {
     @Unique
     private final Set<Slot> hoveredSlots = new HashSet<>();
 
-    @Unique
-    private ItemStack leftClickPersistentStack;
-
-    @Unique
-    private ItemStack rightClickPersistentStack;
-
-    @Unique
-    private boolean isLeftClickDragStarted = false;
-
-    @Unique
-    private boolean isRightClickDragStarted = false;
-
-    @Unique
-    private final List<Slot> leftClickHoveredSlots = new ArrayList<>();
-
-    @Unique final List<Slot> rightClickHoveredSlots = new ArrayList<>();
-
-    @Unique Integer leftClickItemAmount;
-
-    @Unique Integer rightClickItemAmount;
-
-    @Unique final List<Integer> leftClickExistingAmount = new ArrayList<>();
-
-    @Unique final List<Integer> rightClickExistingAmount = new ArrayList<>();
-
-    @Unique List<Integer> leftClickAmountToFillPersistent = new ArrayList<>();
-
-    @Unique List<Integer> rightClickAmountToFillPersistent = new ArrayList<>();
-
     @Inject(method = "mouseReleased", at = @At("RETURN"))
     private void onMouseReleased(int mouseX, int mouseY, int button, CallbackInfo ci) {
         slot = this.getSlotAt(mouseX, mouseY);
