@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 js6pak
+ * Copyright (C) 2022-2024 js6pak
  *
  * This file is part of MojangFix.
  *
@@ -45,7 +45,7 @@ public class ControlsOptionsScreenMixin extends Screen {
         this.controlsList = new ControlsListWidget((KeybindsScreen) (Object) this, minecraft, gameOptions);
     }
 
-    @Redirect(method = "init", at = @At(value = "NEW", target = "net/minecraft/client/gui/widget/OptionButtonWidget"))
+    @Redirect(method = "init", at = @At(value = "NEW", target = "(IIIIILjava/lang/String;)Lnet/minecraft/client/gui/widget/OptionButtonWidget;"))
     private OptionButtonWidget redirectOptionButtonWidget(int id, int x, int y, int width, int height, String text) {
         OptionButtonWidget editButton = new OptionButtonWidget(id, -1, -1, width, height, text);
         CallbackButtonWidget resetButton = new CallbackButtonWidget(-1, -1, 50, 20, "Reset", (button) -> {
@@ -67,7 +67,7 @@ public class ControlsOptionsScreenMixin extends Screen {
     @Unique
     private ButtonWidget doneButton;
 
-    @Redirect(method = "init", at = @At(value = "NEW", target = "net/minecraft/client/gui/widget/ButtonWidget"))
+    @Redirect(method = "init", at = @At(value = "NEW", target = "(IIILjava/lang/String;)Lnet/minecraft/client/gui/widget/ButtonWidget;"))
     private ButtonWidget redirectDoneButton(int id, int x, int y, String text) {
         return doneButton = new ButtonWidget(id, x, this.height - 30, text);
     }
