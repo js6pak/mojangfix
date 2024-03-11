@@ -19,6 +19,7 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -40,8 +41,17 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer imp
         this.model = this.bipedModel = new PlayerEntityModel(0.0F, thinArms);
     }
 
+    @Inject(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/ModelPart;render(F)V"))
+    private void fixFirstPerson$1(CallbackInfo ci) {
+        GL11.glDisable(GL11.GL_CULL_FACE);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }
+
     @Inject(method = "renderHand", at = @At("RETURN"))
-    private void fixFirstPerson(CallbackInfo ci) {
+    private void fixFirstPerson$2(CallbackInfo ci) {
         ((PlayerEntityModel) bipedModel).rightSleeve.render(0.0625F);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_CULL_FACE);
     }
 }
