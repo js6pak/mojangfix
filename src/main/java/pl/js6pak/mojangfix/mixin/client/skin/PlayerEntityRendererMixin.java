@@ -54,4 +54,17 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer imp
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_CULL_FACE);
     }
+
+    @Inject(method = "render(Lnet/minecraft/entity/player/PlayerEntity;DDDFF)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/LivingEntityRenderer;render(Lnet/minecraft/entity/LivingEntity;DDDFF)V"))
+    private void fixOuterLayer$1(CallbackInfo ci) {
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    @Inject(method = "render(Lnet/minecraft/entity/player/PlayerEntity;DDDFF)V", at = @At("RETURN"))
+    private void fixOuterLayer$2(CallbackInfo ci) {
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+    }
 }
