@@ -65,6 +65,5 @@ public abstract class PlayerEntityRendererMixin extends LivingEntityRenderer imp
     @Inject(method = "render(Lnet/minecraft/entity/player/PlayerEntity;DDDFF)V", at = @At("RETURN"))
     private void fixOuterLayer$2(CallbackInfo ci) {
         GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_CULL_FACE);
     }
 }
