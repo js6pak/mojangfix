@@ -1,2 +1,1 @@
-- Fix skin flipping on slim models
-- Fix loading/saving sign data in singleplayer
+- Fix skin rendering by @forkiesassds in https://github.com/js6pak/mojangfix/pull/16
