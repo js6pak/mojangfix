@@ -3,6 +3,7 @@
   "minVersion": "0.8",
   "package": "pl.js6pak.mojangfix.mixin",
   "compatibilityLevel": "JAVA_8",
+  "plugin": "pl.js6pak.mojangfix.mixin.MojangFixMixinPlugin",
   "injectors": {
     "defaultRequire": 1
   },

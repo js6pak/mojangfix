@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 js6pak
+ * Copyright (C) 2022-2024 js6pak
  *
  * This file is part of MojangFix.
  *

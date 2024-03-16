@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 js6pak
+ * Copyright (C) 2022-2024 js6pak
  *
  * This file is part of MojangFix.
  *
@@ -29,7 +29,7 @@ import pl.js6pak.mojangfix.client.skinfix.PlayerEntityModel;
 public class BipedEntityModelMixin {
     @Redirect(
             method = "<init>(FF)V",
-            at = @At(value = "NEW", target = "net/minecraft/client/model/ModelPart"),
+            at = @At(value = "NEW", target = "(II)Lnet/minecraft/client/model/ModelPart;"),
             slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/client/render/entity/model/BipedEntityModel;ears:Lnet/minecraft/client/model/ModelPart;", shift = Shift.AFTER))
     )
     private ModelPart onTexturedQuad(int u, int v) {
