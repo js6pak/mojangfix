@@ -22,7 +22,6 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import org.lwjgl.input.Keyboard;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -31,49 +30,36 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import pl.js6pak.mojangfix.mixinterface.ChatScreenAccessor;
 import pl.js6pak.mojangfix.mixinterface.TextFieldWidgetAccessor;
 
-import java.util.ArrayList;
-import java.util.List;
+import static pl.js6pak.mojangfix.client.text.chat.ChatScreenVariables.*;
 
 @Mixin(ChatScreen.class)
 public class ChatScreenMixin extends Screen implements ChatScreenAccessor {
-    @Unique
-    private String initialMessage = "";
-
-    public ChatScreen setInitialMessage(String initialMessage) {
-        this.initialMessage = initialMessage;
+    public ChatScreen setInitialMessage(String message) {
+        initialMessage = message;
         return (ChatScreen) (Object) this;
     }
 
-    @Unique
-    private TextFieldWidget textField;
-
-    @Unique
-    private int chatHistoryPosition;
-
-    @Unique
-    private static final List<String> CHAT_HISTORY = new ArrayList<>();
-
     @Inject(method = "init", at = @At("RETURN"))
     private void onInit(CallbackInfo ci) {
-        this.textField = new TextFieldWidget(this, this.textRenderer, 2, this.height - 14, this.width - 2, this.height - 2, this.initialMessage);
-        this.textField.setFocused(true);
-        this.textField.setMaxLength(100);
+        textField = new TextFieldWidget(this, textRenderer, 2, height - 14, width - 2, height - 2, initialMessage);
+        textField.setFocused(true);
+        textField.setMaxLength(100);
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void onTick(CallbackInfo ci) {
-        this.textField.tick();
+        textField.tick();
         ci.cancel();
     }
 
     @Redirect(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ChatScreen;drawStringWithShadow(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)V"))
     private void redirectDrawString(ChatScreen chatScreen, TextRenderer textRenderer, String text, int x, int y, int color) {
-        this.drawStringWithShadow(textRenderer, "> " + ((TextFieldWidgetAccessor) this.textField).getDisplayText(), x, y, color);
+        drawStringWithShadow(textRenderer, "> " + ((TextFieldWidgetAccessor) textField).getDisplayText(), x, y, color);
     }
 
     @Redirect(method = "*", at = @At(value = "FIELD", target = "Lnet/minecraft/client/gui/screen/ChatScreen;text:Ljava/lang/String;", opcode = Opcodes.GETFIELD))
     private String getMessage(ChatScreen chatScreen) {
-        return this.textField.getText();
+        return textField.getText();
     }
 
     @Inject(method = "keyPressed", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/ClientPlayerEntity;sendChatMessage(Ljava/lang/String;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
@@ -87,21 +73,24 @@ public class ChatScreenMixin extends Screen implements ChatScreenAccessor {
     }
 
     private void setTextFromHistory() {
-        this.textField.setText(CHAT_HISTORY.get(CHAT_HISTORY.size() + this.chatHistoryPosition));
+        textField.setText(CHAT_HISTORY.get(CHAT_HISTORY.size() + chatHistoryPosition));
     }
 
     @Inject(method = "keyPressed", at = @At(value = "JUMP", opcode = Opcodes.IF_ICMPNE, ordinal = 2), cancellable = true)
-    private void onKeyPressed(char character, int keyCode, CallbackInfo ci) {
-        if (keyCode == Keyboard.KEY_UP && this.chatHistoryPosition > -CHAT_HISTORY.size()) {
-            --this.chatHistoryPosition;
-            this.setTextFromHistory();
-        } else if (keyCode == Keyboard.KEY_DOWN && this.chatHistoryPosition < -1) {
-            ++this.chatHistoryPosition;
-            this.setTextFromHistory();
-        } else {
-            this.textField.keyPressed(character, keyCode);
+    private void onKeyPressedEntry(char character, int keyCode, CallbackInfo ci) {
+        if (keyCode == Keyboard.KEY_UP && chatHistoryPosition > -CHAT_HISTORY.size()) {
+            --chatHistoryPosition;
+            setTextFromHistory();
+            ci.cancel();
+        } else if (keyCode == Keyboard.KEY_DOWN && chatHistoryPosition < -1) {
+            ++chatHistoryPosition;
+            setTextFromHistory();
+            ci.cancel();
         }
+    }
 
-        ci.cancel();
+    @Inject(method = "keyPressed", at = @At("TAIL"))
+    private void onKeyPressedTail(char character, int keyCode, CallbackInfo ci) {
+        textField.keyPressed(character, keyCode);
     }
 }
